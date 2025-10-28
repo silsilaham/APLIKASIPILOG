@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aplikasi EMKL PILOG</title>
     <!-- Tailwind CSS for styling -->
-    <script src="https://cdn.tailwindcss.com"></script>  
+    <script src="https://cdn.tailwindcss.com"></script>
     <!-- jsPDF for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
@@ -1270,7 +1270,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <tbody>
                         ${job.invoice.items.map(item => `
                             <tr class="border-b">
-                                <td class="p-2">${item.description} ${item.ppnStatus !== 'kena_ppn' ? `<div class="text-xs text-slate-500">(${getPPNStatusText(item.ppnStatus)})</div>` : ''}</td>
+                                <td class="p-2">${item.description} ${item.ppnStatus === 'ppn_dibebaskan' ? `<div class="text-xs text-slate-500">(${getPPNStatusText(item.ppnStatus)})</div>` : ''}</td>
                                 <td class="p-2 text-right">${formatCurrency(item.total)}</td>
                             </tr>
                         `).join('')}
@@ -1449,7 +1449,7 @@ document.addEventListener('DOMContentLoaded', () => {
         line(repeatChar('-', 70));
         job.invoice.items.forEach(item => {
             const desc = item.description.length > 28 ? item.description.substring(0, 28) + '..' : item.description;
-            const ppnText = item.ppnStatus !== 'kena_ppn' ? `(${getPPNStatusText(item.ppnStatus)})` : '';
+            const ppnText = item.ppnStatus === 'ppn_dibebaskan' ? `(${getPPNStatusText(item.ppnStatus)})` : '';
             const qty = item.qty.toString().padStart(5);
             const price = formatCurrency(item.price).padStart(17);
             const total = formatCurrency(item.total).padStart(17);
@@ -2407,4 +2407,5 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
 
