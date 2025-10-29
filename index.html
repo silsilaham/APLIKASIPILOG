@@ -59,7 +59,6 @@
                 <h3 class="px-3 pt-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">Master Data</h3>
                 <a href="#" class="sidebar-item flex items-center p-3 rounded-lg" data-page="customer-list"><i class="fas fa-users w-7"></i><span>Data Pelanggan</span></a>
                 <a href="#" class="sidebar-item flex items-center p-3 rounded-lg" data-page="driver-list"><i class="fas fa-id-card-alt w-7"></i><span>Data Sopir</span></a>
-                <a href="#" class="sidebar-item flex items-center p-3 rounded-lg" data-page="item-list"><i class="fas fa-file-invoice w-7"></i><span>Data Item Invoice</span></a>
                 <a href="#" class="sidebar-item flex items-center p-3 rounded-lg" data-page="item-biaya-list"><i class="fas fa-money-check-alt w-7"></i><span>Data Item Biaya</span></a>
                 <div class="pt-2 mt-2 border-t border-slate-700"></div>
                 <h3 class="px-3 pt-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">Keuangan</h3>
@@ -173,35 +172,9 @@
                 </div>
             </div>
             
-            <!-- PAGE: Data Item Invoice -->
+            <!-- PAGE: Data Item Invoice (Hidden, but page exists for future use if needed) -->
             <div id="item-list" class="page">
-                <h2 class="text-3xl font-bold mb-6 text-slate-800">Data Item Invoice</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-md">
-                         <h3 class="text-xl font-semibold mb-4 text-slate-700 border-b pb-3">Tambah Item Baru</h3>
-                         <form id="item-form" class="space-y-4 mt-4">
-                            <div><label for="item-name-input" class="block font-medium mb-1 text-slate-600">Nama/Deskripsi Item</label><input type="text" id="item-name-input" class="w-full p-2 border rounded-md" required></div>
-                            <div><label for="item-default-price-input" class="block font-medium mb-1 text-slate-600">Harga Default</label><input type="number" id="item-default-price-input" class="w-full p-2 border rounded-md" value="0" min="0"></div>
-                            <div><label for="item-default-ppn-status-select" class="block font-medium mb-1 text-slate-600">Status PPN Default</label>
-                                <select id="item-default-ppn-status-select" class="w-full p-2 border rounded-md bg-white">
-                                    <option value="kena_ppn" selected>Kena PPN</option>
-                                    <option value="bebas_ppn">Bebas PPN</option>
-                                    <option value="ppn_dibebaskan">PPN Dibebaskan</option>
-                                </select>
-                            </div>
-                            <div class="text-right pt-2"><button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"><i class="fas fa-plus mr-2"></i>Simpan Item</button></div>
-                         </form>
-                    </div>
-                    <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
-                        <h3 class="text-xl font-semibold mb-4 text-slate-700">Daftar Item Tersimpan</h3>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left">
-                                <thead class="bg-slate-50"><tr><th class="p-4 font-semibold text-slate-600">Deskripsi</th><th class="p-4 font-semibold text-slate-600">Harga Default</th><th class="p-4 font-semibold text-slate-600">Status PPN</th><th class="p-4 font-semibold text-slate-600 text-center">Aksi</th></tr></thead>
-                                <tbody id="item-table-body"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+                <!-- This page is intentionally blank after user request to remove it -->
             </div>
             
             <!-- PAGE: Data Item Biaya -->
@@ -677,27 +650,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     const renderItemListPage = () => {
-        const tableBody = document.getElementById('item-table-body');
-        tableBody.innerHTML = '';
-        if (state.invoiceItemsMaster.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="4" class="text-center p-4 text-slate-500">Belum ada data item.</td></tr>`;
-            return;
-        }
-        state.invoiceItemsMaster.forEach((item) => {
-            const row = document.createElement('tr');
-            row.className = 'border-b';
-            row.innerHTML = `
-                <td class="p-4">${item.name}</td>
-                <td class="p-4">${formatCurrency(item.price)}</td>
-                <td class="p-4">${getPPNStatusText(item.ppnStatus)}</td>
-                <td class="p-4 text-center">
-                    <button class="text-red-500 hover:text-red-700 delete-item-btn" data-id="${item.id}" title="Hapus Item">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        });
+        // This function is now empty as the page is removed, but we keep it to avoid breaking references
+        // The page #item-list is hidden
     };
 
     const renderItemBiayaListPage = () => {
@@ -844,13 +798,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const div = document.createElement('div');
         div.className = 'grid grid-cols-1 md:grid-cols-[2fr,1fr,1fr,1.5fr] gap-4 items-center';
         
-        let itemOptions = '<option value="">-- Pilih Item --</option>';
-        state.invoiceItemsMaster.forEach(item => {
-            itemOptions += `<option value="${item.id}">${item.name}</option>`;
-        });
-
         div.innerHTML = `
-            <select class="p-2 border rounded-md bg-white invoice-item-select">${itemOptions}</select>
+            <input type="text" class="p-2 border rounded-md invoice-desc" placeholder="Deskripsi Biaya" value="${itemData.description || ''}" required>
             <select class="p-2 border rounded-md invoice-ppn-status bg-white">
                 <option value="kena_ppn" selected>Kena PPN</option>
                 <option value="bebas_ppn">Bebas PPN</option>
@@ -863,9 +812,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
-        if(itemData.itemId) {
-            div.querySelector('.invoice-item-select').value = itemData.itemId;
-        }
         if(itemData.ppnStatus) {
             div.querySelector('.invoice-ppn-status').value = itemData.ppnStatus;
         }
@@ -873,16 +819,6 @@ document.addEventListener('DOMContentLoaded', () => {
         div.querySelector('.remove-btn').addEventListener('click', () => {
             div.remove();
             calculateInvoiceTotal();
-        });
-        
-        div.querySelector('.invoice-item-select').addEventListener('change', (e) => {
-            const selectedId = e.target.value;
-            const selectedItem = state.invoiceItemsMaster.find(item => item.id === selectedId);
-            if (selectedItem) {
-                div.querySelector('.invoice-price').value = selectedItem.price;
-                div.querySelector('.invoice-ppn-status').value = selectedItem.ppnStatus;
-                calculateInvoiceTotal();
-            }
         });
         
         div.querySelectorAll('.invoice-qty, .invoice-price, .invoice-ppn-status').forEach(input => {
@@ -963,10 +899,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const populateOpCostItemDropdown = (selectElement) => {
         selectElement.innerHTML = '<option value="">-- Pilih Item Biaya --</option>';
-        state.operationalCostItemsMaster.forEach(item => {
-            const option = new Option(item.name, item.id);
-            selectElement.add(option);
-        });
+        if (state.operationalCostItemsMaster.length > 0) {
+            state.operationalCostItemsMaster.forEach(item => {
+                const option = new Option(item.name, item.id);
+                selectElement.add(option);
+            });
+        }
     };
 
 
@@ -1020,7 +958,7 @@ document.addEventListener('DOMContentLoaded', () => {
             invoiceWrapper.innerHTML = '';
             jobToEdit.invoice.items.forEach(item => {
                 const row = createInvoiceItemRow(item);
-                row.querySelector('.invoice-item-select').value = item.itemId;
+                row.querySelector('.invoice-desc').value = item.description;
                 row.querySelector('.invoice-qty').value = item.qty;
                 row.querySelector('.invoice-price').value = item.price;
                 row.querySelector('.invoice-ppn-status').value = item.ppnStatus || 'kena_ppn';
@@ -1055,10 +993,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const invoiceItems = Array.from(document.querySelectorAll('#invoice-items-wrapper > div')).map(row => {
             const qty = parseFloat(row.querySelector('.invoice-qty').value);
             const price = parseFloat(row.querySelector('.invoice-price').value);
-            const itemSelect = row.querySelector('.invoice-item-select');
             return { 
-                itemId: itemSelect.value,
-                description: itemSelect.options[itemSelect.selectedIndex].text,
+                description: row.querySelector('.invoice-desc').value,
                 qty, 
                 price, 
                 total: qty * price, 
@@ -1411,7 +1347,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const repeatChar = (char, count) => char.repeat(count);
 
-        doc.setFontSize(30); // Set larger font size
+        doc.setFontSize(14); // Set larger font size
         doc.setFont('Courier', 'bold');
         centerLine('PT PASIR INDAH LOGISTIK');
         doc.setFontSize(10); // Reset to default size
@@ -1849,20 +1785,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         // Item Invoice Form Listener
-        document.getElementById('item-form').addEventListener('submit', (e) => {
-             e.preventDefault();
-            const newItem = {
-                id: `ITEM-${Date.now()}`,
-                name: document.getElementById('item-name-input').value,
-                price: parseFloat(document.getElementById('item-default-price-input').value) || 0,
-                ppnStatus: document.getElementById('item-default-ppn-status-select').value,
-            };
-            state.invoiceItemsMaster.push(newItem);
-            saveData();
-            renderItemListPage();
-            e.target.reset();
-            showToast('Item invoice baru berhasil ditambahkan.');
-        });
+        // Removed as per user request
         
         // Op Cost Item Form Listener
         document.getElementById('op-cost-item-form').addEventListener('submit', (e) => {
@@ -2407,5 +2330,4 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
-
 
